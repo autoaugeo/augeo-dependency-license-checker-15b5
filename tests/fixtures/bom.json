@@ -1,0 +1,10 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "components": [
+    {"type": "library", "name": "cdx-mit", "version": "1.0.0", "licenses": [{"license": {"id": "MIT"}}]},
+    {"type": "library", "name": "cdx-custom", "version": "2.0.0", "licenses": [{"license": {"name": "Acme Internal Licence 7"}}]},
+    {"type": "library", "name": "cdx-expr", "version": "3.1.0", "licenses": [{"expression": "Apache-2.0 OR MIT"}]}
+  ]
+}

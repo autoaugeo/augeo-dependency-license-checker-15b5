@@ -1,0 +1,9 @@
+{
+  "name": "saas-strict",
+  "project_licence": "Proprietary",
+  "mode": "saas",
+  "allow": ["MIT", "Apache-2.0"],
+  "exceptions": [
+    {"package": "gamma-gpl", "decision": "allow", "reason": "build tooling only"}
+  ]
+}

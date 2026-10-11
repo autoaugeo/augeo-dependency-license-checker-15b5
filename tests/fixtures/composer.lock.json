@@ -1,0 +1,9 @@
+{
+  "packages": [
+    {"name": "vendor/agpl-lib", "version": "1.0.0", "license": ["AGPL-3.0-only"]},
+    {"name": "vendor/lgpl-lib", "version": "2.0.0", "license": ["LGPL-2.1-or-later"]}
+  ],
+  "packages-dev": [
+    {"name": "vendor/mit-lib", "version": "1.1.0", "license": ["MIT"]}
+  ]
+}
