@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Docs: the README now opens with the one command to run (`python -m licence_check <path>`)
+  and points to the project's free reference page for the rule sets,
+  https://augeo-licence-policy-pack-for-dependency-licen-15b5.pages.dev/ . Tests: the
+  link check in every Markdown file allows exactly that host and still fails on any other
+  non-reference host.
 - Tests: `tests/run_tests.py` now asserts every rule of the GitHub publish rail: total
   size, no binaries or CI files, no email address or secret-like string in any file,
   link hosts limited to reference sites, no images, and no star counts,

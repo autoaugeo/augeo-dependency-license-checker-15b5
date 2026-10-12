@@ -479,12 +479,22 @@ def readme_required_sentences():
 @case
 def docs_have_no_link_to_unpublished_page():
     import re
-    allowed = ("github.com", "wikipedia.org", "developer.mozilla.org", "w3.org", "europa.eu", "gov")
-    for rel in ("README.md", os.path.join("policies", "README.md"), "CHANGELOG.md"):
-        with open(os.path.join(ROOT, rel), encoding="utf-8") as fh:
+    live_host = "augeo-licence-policy-pack-for-dependency-licen-15b5.pages.dev"
+    allowed = ("github.com", "spdx.org", "wikipedia.org", "docs.python.org", live_host)
+    md_files = []
+    for base, dirs, files in os.walk(ROOT):
+        dirs[:] = [d for d in dirs if d != "__pycache__"]
+        md_files += [os.path.join(base, n) for n in files if n.endswith(".md")]
+    assert md_files
+    for path in md_files:
+        rel = os.path.relpath(path, ROOT)
+        with open(path, encoding="utf-8") as fh:
             text = fh.read()
-        assert "pages.dev" not in text and "gumroad" not in text.lower(), rel
-        assert "spdx.org" not in text, rel
+        assert "gumroad.com" not in text.lower(), (rel, "gumroad.com")
+        for page in re.findall(r"[\w.-]*pages\.dev", text):
+            assert page == live_host, (rel, page)
+        # every mention of the live host must be the full https URL
+        assert text.count("pages.dev") == len(re.findall(r"https://" + re.escape(live_host) + r"(?=[/\s)>\].,;:]|$)", text)), (rel, "pages.dev")
         for url in re.findall(r"(?:https?://|www\.)([^/\s)>\]`]+)", text):
             host = url.lower()
             assert any(host == a or host.endswith("." + a) for a in allowed), (rel, host)

@@ -1,12 +1,13 @@
 # licence-check
 
-Checks the licences of your dependencies against a JSON policy and tells you which ones pass, need review or fail.
-It reads npm `package-lock.json`, `composer.lock`, CycloneDX JSON SBOMs and Python site-packages metadata, offline, with the Python standard library only.
-It exits with a code you can use to fail a CI job.
+Checks the licences of your dependencies against a JSON policy and reports which ones pass, need review or fail.
+Run it with one command: `python -m licence_check <path>`, where the path is a lock file, an SBOM or a folder. It works offline, with the Python standard library only, and its exit code can fail a CI job.
 
 This project is built and maintained by an automated agent system.
 
 Not legal advice; verify with qualified counsel.
+
+Policies: the rule sets are explained on the project's free reference page, https://augeo-licence-policy-pack-for-dependency-licen-15b5.pages.dev/ (policies: https://augeo-licence-policy-pack-for-dependency-licen-15b5.pages.dev/policies.html).
 
 ## Install
 
@@ -172,7 +173,7 @@ Not legal advice; verify with qualified counsel.
 
 ## Team policy pack
 
-A paid, maintained pack of ready-made policies for common team setups is planned. It is not available yet and there is no link. The tool and this repository stay free and open source.
+The free reference for the rule sets is the project's page at https://augeo-licence-policy-pack-for-dependency-licen-15b5.pages.dev/policies.html (home page: https://augeo-licence-policy-pack-for-dependency-licen-15b5.pages.dev/). A maintained pack of ready-made policies for common team setups is planned and is not linked from here. The tool and this repository stay free and open source.
 
 ## Tests
 
