@@ -1,0 +1,70 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "sample-app-sbom",
+  "documentNamespace": "https://example.com/spdx/sample-app-sbom",
+  "creationInfo": {
+    "created": "2026-01-01T00:00:00Z",
+    "creators": ["Tool: made-up-fixture"]
+  },
+  "documentDescribes": ["SPDXRef-Package-sample-app"],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-sample-app",
+      "name": "sample-app",
+      "versionInfo": "0.0.1",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "GPL-3.0-only",
+      "licenseDeclared": "GPL-3.0-only"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-spdx-mit",
+      "name": "spdx-mit",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "GPL-3.0-only"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-spdx-apache",
+      "name": "spdx-apache",
+      "versionInfo": "2.0.0",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-spdx-dual",
+      "name": "spdx-dual",
+      "versionInfo": "1.4.0",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "MIT OR GPL-3.0-only",
+      "licenseDeclared": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-spdx-agpl",
+      "name": "spdx-agpl",
+      "versionInfo": "0.9.0",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "AGPL-3.0-only",
+      "licenseDeclared": "AGPL-3.0-only"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-spdx-fallback",
+      "name": "spdx-fallback",
+      "versionInfo": "3.2.1",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "ISC"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-spdx-unknown",
+      "name": "spdx-unknown",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NONE"
+    }
+  ]
+}

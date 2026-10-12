@@ -151,6 +151,54 @@ def _cdx_from_data(data, source):
     return out
 
 
+_SPDX_EMPTY = ("", "noassertion", "none")
+
+
+def _spdx_value(value):
+    if not isinstance(value, str):
+        return None
+    value = value.strip()
+    return None if value.lower() in _SPDX_EMPTY else value
+
+
+def _spdx_root_ids(data):
+    """SPDXIDs of the packages the document says it describes."""
+    roots = set()
+    described = data.get("documentDescribes")
+    for ref in described if isinstance(described, list) else []:
+        if isinstance(ref, str):
+            roots.add(ref)
+    relationships = data.get("relationships")
+    for rel in relationships if isinstance(relationships, list) else []:
+        if not isinstance(rel, dict):
+            continue
+        kind = str(rel.get("relationshipType") or "").upper()
+        first, second = rel.get("spdxElementId"), rel.get("relatedSpdxElement")
+        if kind == "DESCRIBES" and first == "SPDXRef-DOCUMENT" and isinstance(second, str):
+            roots.add(second)
+        elif kind == "DESCRIBED_BY" and second == "SPDXRef-DOCUMENT" and isinstance(first, str):
+            roots.add(first)
+    return roots
+
+
+def _spdx_from_data(data, source):
+    packages = data.get("packages") if isinstance(data, dict) else None
+    if not isinstance(packages, list):
+        raise ReaderError("not an SPDX JSON file: " + source)
+    roots = _spdx_root_ids(data)
+    out = []
+    for entry in packages:
+        if not isinstance(entry, dict) or entry.get("SPDXID") in roots:
+            continue
+        raw = _spdx_value(entry.get("licenseConcluded")) or _spdx_value(entry.get("licenseDeclared"))
+        out.append(_pkg(entry.get("name"), entry.get("versionInfo"), raw, source))
+    return out
+
+
+def read_spdx(path):
+    return _spdx_from_data(_load_json(path), os.path.basename(path))
+
+
 def read_npm(path):
     return _npm_from_data(_load_json(path), os.path.basename(path))
 
@@ -229,6 +277,9 @@ def read_python_site_packages(path):
 def _sniff(data):
     if not isinstance(data, dict):
         return None
+    version = data.get("spdxVersion")
+    if isinstance(version, str) and version.startswith("SPDX-2") and isinstance(data.get("packages"), list):
+        return "spdx"
     if "bomFormat" in data or isinstance(data.get("components"), list):
         return "cyclonedx"
     packages = data.get("packages")
@@ -239,7 +290,7 @@ def _sniff(data):
     return None
 
 
-_BY_KIND = {"npm": _npm_from_data, "composer": _composer_from_data, "cyclonedx": _cdx_from_data}
+_BY_KIND = {"npm": _npm_from_data, "composer": _composer_from_data, "cyclonedx": _cdx_from_data, "spdx": _spdx_from_data}
 _BY_NAME = {"package-lock.json": "npm", "composer.lock": "composer"}
 
 

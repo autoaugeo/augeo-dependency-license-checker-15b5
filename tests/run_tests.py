@@ -19,6 +19,7 @@ FIX = os.path.join(ROOT, "tests", "fixtures")
 NPM = os.path.join(FIX, "package-lock.json")
 COMPOSER = os.path.join(FIX, "composer.lock.json")
 BOM = os.path.join(FIX, "bom.json")
+SPDX = os.path.join(FIX, "sbom.spdx.json")
 SITE = os.path.join(FIX, "site-packages")
 SAAS = os.path.join(FIX, "policy-saas.json")
 BAD = os.path.join(FIX, "policy-bad.json")
@@ -220,6 +221,53 @@ def read_path_sniffs_composer_and_rejects_policy_file():
     except readers.ReaderError:
         return
     raise AssertionError("policy file should not be read as a lock file")
+
+
+@case
+def spdx_detected_by_sniffing():
+    items = readers.read_path(SPDX)
+    assert len(items) == 6 and items[0]["source"] == "sbom.spdx.json"
+    assert readers._sniff(readers._load_json(SPDX)) == "spdx"
+    assert readers._sniff(readers._load_json(COMPOSER)) == "composer"
+
+
+@case
+def spdx_concluded_beats_declared():
+    assert by_name(readers.read_path(SPDX))["spdx-mit"]["licence_raw"] == "MIT"
+
+
+@case
+def spdx_noassertion_falls_back_to_declared():
+    items = by_name(readers.read_path(SPDX))
+    assert items["spdx-fallback"]["licence_raw"] == "ISC"
+    assert items["spdx-dual"]["licence_raw"] == "MIT OR GPL-3.0-only"
+    assert items["spdx-unknown"]["licence_raw"] is None
+
+
+@case
+def spdx_root_package_skipped():
+    assert "sample-app" not in by_name(readers.read_path(SPDX))
+    data = {
+        "spdxVersion": "SPDX-2.2",
+        "packages": [{"SPDXID": "SPDXRef-Root", "name": "root", "licenseConcluded": "MIT"},
+                     {"SPDXID": "SPDXRef-Dep", "name": "dep", "licenseConcluded": "MIT"}],
+        "relationships": [{"spdxElementId": "SPDXRef-DOCUMENT", "relationshipType": "DESCRIBES",
+                           "relatedSpdxElement": "SPDXRef-Root"}],
+    }
+    assert [p["name"] for p in readers._spdx_from_data(data, "t")] == ["dep"]
+
+
+@case
+def spdx_missing_licence_goes_to_review():
+    res = default_policy().evaluate_package(by_name(readers.read_path(SPDX))["spdx-unknown"])
+    assert res["decision"] == "review" and res["reason"] == "no licence declared"
+
+
+@case
+def cli_exit_1_on_spdx_fixture_with_default_policy():
+    code, out, _ = run_cli([SPDX])
+    assert code == 1 and "Scanned 6 packages: 4 allow, 1 review, 1 deny" in out
+    assert "DENY   spdx-agpl 0.9.0" in out
 
 
 @case
@@ -437,7 +485,7 @@ def cli_custom_policy_changes_exit_code():
 @case
 def cli_directory_scan_finds_all_sources():
     code, out, _ = run_cli([FIX, "--format", "json"])
-    assert json.loads(out)["summary"]["packages"] == 15 and code == 1
+    assert json.loads(out)["summary"]["packages"] == 21 and code == 1
 
 
 @case
@@ -459,6 +507,7 @@ def readme_examples_match_real_output():
         [NPM],
         [COMPOSER, "--format", "md"],
         [BOM, "--format", "json"],
+        [SPDX],
         [SITE, "--policy", SAAS, "--fail-on", "review"],
     ]
     for argv in runs:

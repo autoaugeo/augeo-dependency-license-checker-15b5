@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 (not yet tagged)
+
+- New: SPDX 2.x JSON SBOM reader. A `.json` file with `spdxVersion` is detected by
+  sniffing, also in directory scans. It uses `licenseConcluded`, falls back to
+  `licenseDeclared` when the first is missing, `NOASSERTION` or `NONE`, and skips the
+  package named by `documentDescribes` or a `DESCRIBES` relationship. Fixture
+  `tests/fixtures/sbom.spdx.json`, six new tests and a README section.
+- Docs: the README opening uses the American spelling people search for (dependency
+  license checker, license compliance, SBOM, SPDX, CycloneDX).
+
 ## Unreleased
 
 - Docs: the README now opens with the one command to run (`python -m licence_check <path>`)

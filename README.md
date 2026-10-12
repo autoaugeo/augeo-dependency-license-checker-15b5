@@ -1,6 +1,7 @@
-# licence-check
+# licence-check: dependency license checker
 
-Checks the licences of your dependencies against a JSON policy and reports which ones pass, need review or fail.
+A dependency license checker for license compliance: it reads lock files, SPDX or CycloneDX SBOM files and installed Python metadata, with no dependencies beyond the Python standard library.
+It checks the licences of your dependencies against a JSON policy and reports which ones pass, need review or fail.
 Run it with one command: `python -m licence_check <path>`, where the path is a lock file, an SBOM or a folder. It works offline, with the Python standard library only, and its exit code can fail a CI job.
 
 This project is built and maintained by an automated agent system.
@@ -115,6 +116,28 @@ python -m licence_check tests/fixtures/bom.json --format json
     }
   ]
 }
+```
+
+### Check an SPDX SBOM (exit code 1)
+
+An SPDX 2.x JSON SBOM, such as the file GitHub's dependency graph can export, can be checked this way; this has not been tested against a real GitHub export, only against the made-up fixture below. The reader uses `licenseConcluded`, falls back to `licenseDeclared` when it is missing, `NOASSERTION` or `NONE`, and skips the package the document says it describes.
+
+```
+python -m licence_check tests/fixtures/sbom.spdx.json
+```
+
+```
+licence-check 0.1.0
+Not legal advice; verify with qualified counsel.
+Policy: default-permissive | project licence: MIT | mode: distributed-binary
+Scanned 6 packages: 4 allow, 1 review, 1 deny
+
+DENY   spdx-agpl 0.9.0  [AGPL-3.0-only]  AGPL-3.0-only is on the deny list
+REVIEW spdx-unknown 1.0.0  [(none)]  no licence declared
+ALLOW  spdx-apache 2.0.0  [Apache-2.0]  Apache-2.0 is on the allow list
+ALLOW  spdx-dual 1.4.0  [MIT OR GPL-3.0-only]  OR: MIT is on the allow list
+ALLOW  spdx-fallback 3.2.1  [ISC]  ISC is on the allow list
+ALLOW  spdx-mit 1.0.0  [MIT]  MIT is on the allow list
 ```
 
 ### 4. Python site-packages with a SaaS policy (exit code 2)
